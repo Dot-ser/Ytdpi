@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Downloader</h1>
+        <form id="downloadForm">
+            <input type="url" name="url" placeholder="Enter YouTube URL" required>
+            <button type="submit">Download</button>
+        </form>
+        <div id="response"></div>
+    </div>
+    <script>
+        document.getElementById("downloadForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const url = e.target.url.value;
+            const responseDiv = document.getElementById("response");
+            responseDiv.innerHTML = "Processing...";
+
+            try {
+                const response = await fetch("/download", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url }),
+                });
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = downloadUrl;
+                    a.download = "video.mp3";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    responseDiv.innerHTML = "Download successful!";
+                } else {
+                    const error = await response.json();
+                    responseDiv.innerHTML = `Error: ${error.error}`;
+                }
+            } catch (err) {
+                responseDiv.innerHTML = `Error: ${err.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
