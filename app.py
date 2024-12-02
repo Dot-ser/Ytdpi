@@ -7,15 +7,28 @@ app = Flask(__name__)
 
 # Proxies and user agents
 PROXIES = [
-    "http://45.117.29.25:58080",
     "http://103.41.35.162:58080",
-    "http://207.180.234.234:3128",
+    "http://67.43.228.251:11787",
+    "http://49.51.244.112:8888",
 ]
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0",
 ]
+
+# Track if cleanup has already been done
+cleanup_done = False
+
+@app.before_request
+def cleanup():
+    global cleanup_done
+    if not cleanup_done:
+        if not os.path.exists('downloads'):
+            os.mkdir('downloads')
+        for file in os.listdir('downloads'):
+            os.remove(os.path.join('downloads', file))
+        cleanup_done = True
 
 # Route: Home Page
 @app.route('/')
@@ -57,13 +70,6 @@ def download():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Cleanup downloads on app restart
-@app.before_first_request
-def cleanup():
-    if not os.path.exists('downloads'):
-        os.mkdir('downloads')
-    for file in os.listdir('downloads'):
-        os.remove(os.path.join('downloads', file))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
