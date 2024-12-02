@@ -7,9 +7,9 @@ app = Flask(__name__)
 
 # Proxies and user agents
 PROXIES = [
-    "http://proxy1:port",
-    "http://proxy2:port",
-    "http://proxy3:port",
+    "http://45.117.29.25:58080",
+    "http://103.41.35.162:58080",
+    "http://207.180.234.234:3128",
 ]
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
